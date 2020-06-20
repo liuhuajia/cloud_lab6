@@ -23,8 +23,8 @@ var (
 	)
 	usage = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-		Name:      "cpu_usage",
-		Help:      "system cpu usage.",
+			Name:      "cpu_usage",
+			Help:      "system cpu usage.",
 	})
 )
 
