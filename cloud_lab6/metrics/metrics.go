@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"github.com/shirou/gopsutil/cpu"
 	"github.com/prometheus/client_golang/prometheus"
 	"time"
 )
@@ -20,6 +21,11 @@ var (
 			Buckets:   []float64{0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0, 60.0, 120.0, 300.0},
 		}, []string{},
 	)
+	usage = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+		Name:      "cpu_usage",
+		Help:      "system cpu usage.",
+	})
 )
 
 // AdmissionLatency measures latency / execution time of Admission Control execution
@@ -32,6 +38,7 @@ type RequestLatency struct {
 func Register() {
 	prometheus.MustRegister(requestCount)
 	prometheus.MustRegister(requestLatency)
+	prometheus.MustRegister(cpu)
 }
 
 
@@ -52,4 +59,7 @@ func (t *RequestLatency) Observe() {
 // RequestIncrease increases the counter of request handled by this service
 func RequestIncrease() {
 	requestCount.WithLabelValues().Add(1)
+	cpu_usage,_ :=cpu.Percent(time.Second, false)
+	usage.Set(cpu_usage[0])
+	
 }
